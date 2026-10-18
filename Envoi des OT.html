@@ -1,0 +1,696 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Envoi des OT</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout : en-tête blanc + onglets, bandeau de section coloré pleine largeur, colonne centrée, barre d'action fixe en bas */
+:root{
+  --bg:#f6f2f1; --surface:#ffffff; --fg:#241b1b; --muted:#6f6361; --line:#e4dad8;
+  --accent:#d1101e; --accent-ink:#ffffff; --accent-soft:#fbe4e5;
+  --warn:#975700; --warn-soft:#fdf1dc; --ok:#2f7a4b; --ok-soft:#e1f1e6; --on-strong:#ffffff;
+  --debut-bg:#fbeceb; --debut:#c8102e;
+  --chantier-bg:#fcefe9; --chantier:#b0381c;
+  --heures-bg:#f9eff1; --heures:#9e2236;
+  --hdeb:#cf4a68; --hfin:#7a1a2c;
+  --mat-bg:#f6efe2; --mat:#86672b;
+  --veh-bg:#f0ecea; --veh:#5e5451;
+  --fin-bg:#f2efee; --fin:#3e3534;
+  --page:var(--bg); --strong:var(--accent);
+  --display:"Barlow Condensed","Arial Narrow",sans-serif;
+  --body:"Barlow",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141010; --surface:#1e1818; --fg:#f2e9e8; --muted:#b3a5a3; --line:#3a2f2e;
+  --accent:#f0505b; --accent-ink:#1b0709; --accent-soft:#3a1c1f;
+  --warn:#f0b35a; --warn-soft:#3a2a12; --ok:#74c992; --ok-soft:#16301f; --on-strong:#160d0d;
+  --debut-bg:#221213; --debut:#f06b76; --chantier-bg:#221612; --chantier:#ef8a66;
+  --heures-bg:#211417; --heures:#e67a8d; --hdeb:#f394aa; --hfin:#d9708a;
+  --mat-bg:#211c12; --mat:#d8b36a; --veh-bg:#1c1918; --veh:#b9aeaa; --fin-bg:#1a1717; --fin:#a99f9d;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141010; --surface:#1e1818; --fg:#f2e9e8; --muted:#b3a5a3; --line:#3a2f2e;
+  --accent:#f0505b; --accent-ink:#1b0709; --accent-soft:#3a1c1f;
+  --warn:#f0b35a; --warn-soft:#3a2a12; --ok:#74c992; --ok-soft:#16301f; --on-strong:#160d0d;
+  --debut-bg:#221213; --debut:#f06b76; --chantier-bg:#221612; --chantier:#ef8a66;
+  --heures-bg:#211417; --heures:#e67a8d; --hdeb:#f394aa; --hfin:#d9708a;
+  --mat-bg:#211c12; --mat:#d8b36a; --veh-bg:#1c1918; --veh:#b9aeaa; --fin-bg:#1a1717; --fin:#a99f9d;
+  color-scheme:dark}
+:root[data-sec="debut"]{--page:var(--debut-bg);--strong:var(--debut)}
+:root[data-sec="chantier"]{--page:var(--chantier-bg);--strong:var(--chantier)}
+:root[data-sec="heures"]{--page:var(--heures-bg);--strong:var(--heures)}
+:root[data-sec="mat"]{--page:var(--mat-bg);--strong:var(--mat)}
+:root[data-sec="veh"]{--page:var(--veh-bg);--strong:var(--veh)}
+:root[data-sec="fin"]{--page:var(--fin-bg);--strong:var(--fin)}
+body{background:var(--page);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.45}
+@media (prefers-reduced-motion:no-preference){body{transition:background-color .25s}}
+.in{max-width:680px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top{background:var(--surface);border-bottom:1px solid var(--line)}
+.top .in{padding-block:14px 0;display:grid;gap:2px}
+.brand{display:flex;align-items:center;gap:10px}
+.mark{width:30px;height:30px;border-radius:7px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:.95rem;letter-spacing:.02em;flex:none}
+h1{font-family:var(--display);font-size:1.7rem;letter-spacing:.01em;margin:0;line-height:1.1}
+.sub{color:var(--muted);margin:0;font-size:.9rem}
+.tabs{display:flex;gap:2px;margin-top:8px;overflow-x:auto}
+.tab{font:inherit;font-weight:600;flex:none;background:none;border:0;border-bottom:3px solid transparent;color:var(--muted);padding:9px 12px;cursor:pointer;white-space:nowrap}
+.tab[aria-selected="true"]{color:var(--accent);border-color:var(--accent)}
+.count{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:.75rem;line-height:20px;text-align:center;margin-left:4px;font-variant-numeric:tabular-nums}
+.band{background:var(--strong);color:var(--on-strong)}
+.band .in{display:flex;align-items:center;gap:10px;padding-block:10px;font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.02em;text-transform:uppercase}
+.band svg,.ico{width:22px;height:22px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+main.in{padding-block:18px 130px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:0 0 18px;list-style:none;padding:0}
+.steps li{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-top:4px solid var(--line);padding-top:6px;min-width:0;overflow-wrap:anywhere}
+.steps li.done{border-color:var(--strong);color:var(--fg)}
+.steps li.on{border-color:var(--strong);color:var(--strong);font-weight:700}
+h2{font-family:var(--display);font-size:1.45rem;margin:0 0 2px;text-wrap:balance}
+.eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;color:var(--strong);font-weight:700;margin:0 0 2px}
+.hint{color:var(--muted);margin:0;font-size:.95rem}
+.panel{display:grid;gap:14px}
+.sec{display:grid;gap:10px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;padding-top:6px}
+.search,input[type=date],input[type=number],select,textarea{font:inherit;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+.search,textarea{width:100%;box-sizing:border-box}
+textarea{min-height:110px;resize:vertical}
+.tsel{display:inline-flex;align-items:center;gap:3px;flex:none}
+.tsel select{font-family:var(--mono);padding:7px 6px}
+.list{display:grid;gap:8px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:inherit;background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;cursor:pointer;box-sizing:border-box}
+.opt:hover{border-color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.opt[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.av{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:.85rem}
+.opt[aria-pressed="true"] .av{background:var(--accent);color:var(--accent-ink)}
+.meta{min-width:0;flex:1}
+.meta b{display:block;font-weight:600}
+.meta span{color:var(--muted);font-size:.88rem}
+.tag{font-family:var(--mono);font-size:.76rem;border:1px solid var(--line);border-radius:4px;padding:1px 6px;white-space:nowrap;color:var(--fg)}
+.tag.warn{border-color:var(--warn);color:var(--warn)}
+.tag.acc{border-color:var(--accent);color:var(--accent)}
+.tag.ok{border-color:var(--ok);color:var(--ok)}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.todo{background:var(--warn-soft);color:var(--warn)}
+.pill.ko{background:var(--accent-soft);color:var(--accent)}
+.check{flex:none;width:22px;height:22px;border-radius:6px;border:2px solid var(--line);display:grid;place-items:center;color:var(--accent-ink);font-size:14px;box-sizing:border-box}
+.opt[aria-pressed="true"] .check,.check.on{background:var(--accent);border-color:var(--accent)}
+.radio{border-radius:50%}
+.link{font:inherit;font-size:.9rem;background:none;border:0;color:var(--accent);cursor:pointer;padding:4px 0;font-weight:600;text-align:left}
+.field{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center}
+.field label,.field .lbl{font-weight:600}
+.time{font-family:var(--mono);font-size:.95rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.note{border-radius:8px;padding:10px 12px;font-size:.92rem;background:var(--warn-soft);color:var(--warn);margin:0}
+.note.info{background:var(--surface);color:var(--muted);border:1px dashed var(--line)}
+.note.ok{background:var(--ok-soft);color:var(--ok)}
+.note ul{margin:0;padding-left:18px;display:grid;gap:6px}
+.note button{font:inherit;color:inherit;background:none;border:0;padding:0;text-align:left;cursor:pointer;text-decoration:underline;text-underline-offset:2px}
+.note .link{color:var(--warn);font-weight:700;display:inline-block;margin-top:2px}
+.rows{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.row{display:flex;align-items:center;gap:10px;padding:10px 14px;border-top:1px solid var(--line);width:100%;box-sizing:border-box;font:inherit;color:inherit;background:none;text-align:left;border-left:0;border-right:0;border-bottom:0}
+.row:first-child{border-top:0}
+.row .meta b{overflow-wrap:anywhere}
+.row.bad{background:var(--warn-soft);cursor:pointer}
+.row.bad .meta b{color:var(--warn)}
+button.row{cursor:pointer}
+button.row:hover{background:var(--accent-soft)}
+.dur{color:var(--muted);font-size:.85rem;flex:none;min-width:48px;text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.recap{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.recap section{padding:14px 16px;border-top:1px solid var(--line);display:grid;gap:6px}
+.recap section:first-child{border-top:0}
+.recap h3{margin:0;font-size:.75rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.sub-h{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin-top:6px}
+.kv{display:flex;justify-content:space-between;gap:10px;font-size:.95rem}
+.kv>span:first-child{min-width:0}
+.kv>span:last-child{font-family:var(--mono);font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.comment{white-space:pre-wrap;overflow-wrap:anywhere}
+.scroll{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:10px}
+table.grid{border-collapse:collapse;width:100%;font-size:.9rem;font-variant-numeric:tabular-nums}
+.grid th,.grid td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.grid th:first-child,.grid td:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+.grid thead th{font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.grid tr:last-child td{border-bottom:0}
+.grid .tot{font-weight:700}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom,0px))}
+.bar .in{display:flex;gap:10px;align-items:center}
+.bar .info{flex:1;min-width:0;color:var(--muted);font-size:.9rem}
+.btn{font:inherit;font-weight:600;border-radius:8px;padding:11px 16px;cursor:pointer;border:1.5px solid var(--line);background:var(--surface);color:var(--fg)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.danger{border-color:var(--accent);color:var(--accent)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+@media (prefers-reduced-motion:no-preference){.panel{animation:in .18s ease-out}@keyframes in{from{transform:translateY(6px)}to{transform:none}}}
+
+.tblock{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.tblock-h{display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--hdeb);color:var(--on-strong);font-family:var(--display);font-weight:700;font-size:1.05rem;letter-spacing:.03em;text-transform:uppercase}
+.tblock.e .tblock-h{background:var(--hfin)}
+.tblock-b{display:grid;gap:10px;padding:12px 14px}
+.tblock .rows{border-radius:8px}
+.toggle{display:inline-flex;border:1.5px solid var(--line);border-radius:8px;overflow:hidden}
+.toggle button{font:inherit;font-weight:600;padding:7px 16px;border:0;background:var(--surface);color:var(--fg);cursor:pointer}
+.toggle button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
+.tl{list-style:none;margin:0 0 0 6px;padding:0;border-left:3px solid var(--strong)}
+.tl li{padding:4px 0 12px 16px;position:relative}
+.tl li::before{content:"";position:absolute;left:-8px;top:9px;width:11px;height:11px;border-radius:50%;background:var(--strong);border:2px solid var(--page)}
+.tl span{color:var(--muted);font-size:.9rem}
+.vcard{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:10px}
+.vcard-h{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.vcard-h b{flex:1;min-width:0}
+.slots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.slots label{display:grid;gap:4px;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;min-width:0}
+.slots select{width:100%;text-transform:none;letter-spacing:0;font-size:.92rem;padding:8px 6px}
+@media (max-width:420px){.slots{grid-template-columns:1fr}}
+.vcard textarea{min-height:70px}
+.results{background:var(--surface);border:1px solid var(--line);border-radius:10px;max-height:320px;overflow-y:auto}
+.results .grp{font-size:.72rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;padding:8px 14px 4px;background:var(--page)}
+.mrow{display:flex;align-items:center;gap:8px;padding:9px 14px;border-top:1px solid var(--line);flex-wrap:wrap}
+.mrow:first-child{border-top:0}
+.mrow .meta{font-size:.95rem;flex:1 1 150px}
+.mrow .meta span{display:block;font-size:.8rem}
+.qty{display:flex;align-items:center;gap:6px;flex:none}
+.qty input{width:84px;padding:7px 8px;font-family:var(--mono);text-align:right}
+.qty input.bad{border-color:var(--warn);background:var(--warn-soft)}
+.unit{font-size:.85rem;color:var(--muted);min-width:56px}
+.utag{font-size:.75rem;font-weight:700;border-radius:4px;padding:1px 6px;background:var(--mat-bg);color:var(--mat);white-space:nowrap}
+.x{font:inherit;background:none;border:0;color:var(--muted);cursor:pointer;font-size:1.25rem;padding:2px 6px;line-height:1}
+.addbtn{display:flex;align-items:center;gap:10px;width:100%;padding:9px 14px;border:0;border-top:1px solid var(--line);background:none;color:var(--fg);font:inherit;text-align:left;cursor:pointer}
+.results .addbtn:first-of-type{border-top:0}
+.addbtn:hover{background:var(--accent-soft)}
+.addbtn .plus{color:var(--accent);font-weight:700;flex:none}
+.addbtn .meta span{display:block;font-size:.8rem}
+.morebtn{font:inherit;font-weight:600;color:var(--accent);background:var(--surface);border:1.5px dashed var(--accent);border-radius:10px;padding:10px 14px;cursor:pointer;text-align:left}
+.done-box{text-align:center;padding:30px 10px;display:grid;gap:10px;justify-items:center}
+.done-box .ok{font-family:var(--display);font-size:1.8rem;color:var(--ok)}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px}
+.chip{font:inherit;font-size:.88rem;border:1.5px solid var(--line);background:var(--surface);color:var(--fg);border-radius:999px;padding:6px 12px;cursor:pointer;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.mail{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.mail-h{padding:10px 14px;border-bottom:1px solid var(--line);display:grid;gap:3px;font-size:.92rem}
+.mail-h span{color:var(--muted)}
+.mail-b{padding:12px 14px;display:grid;gap:8px;font-size:.92rem}
+.wk-h{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding-top:6px}
+.wk-h b{font-family:var(--display);font-size:1.1rem}
+</style>
+
+<header class="top"><div class="in">
+  <div class="brand"><span class="mark" aria-hidden="true">OT</span><div><h1>Envoi des OT</h1><p class="sub" id="who"></p></div></div>
+  <nav class="tabs" role="tablist" aria-label="Rubriques">
+    <button class="tab" role="tab" type="button" data-tab="saisie">Saisie</button>
+    <button class="tab" role="tab" type="button" data-tab="rapports">Mes rapports</button>
+    <button class="tab" role="tab" type="button" data-tab="semaine">Ma semaine</button>
+  </nav>
+</div></header>
+<div class="band"><div class="in" id="band"></div></div>
+<main class="in">
+  <ol class="steps" id="steps"><li>Début</li><li>Chantiers</li><li>Véhicules</li><li>Fin</li></ol>
+  <div id="view"></div>
+</main>
+<div class="bar"><div class="in">
+  <button class="btn" id="back" type="button">Retour</button>
+  <div class="info" id="info"></div>
+  <button class="btn primary" id="next" type="button">Suivant</button>
+</div></div>
+
+<script>
+/* ===== Données d'exemple partagées (simulent la base de données) ===== */
+const AGENCE="Rennes";
+const RESPONSABLES=[
+  {id:"r1",nom:"Philippe Garnier",role:"Conducteur de travaux"},
+  {id:"r2",nom:"Laurent Bertin",role:"Conducteur de travaux"},
+  {id:"r3",nom:"Driss Benjelloun",role:"Chef de chantier"},
+  {id:"r4",nom:"Stéphane Le Roux",role:"Chef de chantier"},
+  {id:"r5",nom:"Nicolas Prigent",role:"Conducteur de travaux"}
+];
+const CHANTIERS=[
+  {id:"k1",code:"58734",nom:"Réhabilitation collecteur EU DN400",lieu:"Bruz · rue de la Gare",resp:["r1","r3"]},
+  {id:"k2",code:"59102",nom:"Chemisage continu DN300",lieu:"Rennes · bd de Vitré",resp:["r2"]},
+  {id:"k3",code:"58561",nom:"Inspection ITV réseau EP",lieu:"Cesson-Sévigné · ZA Sud",resp:["r1"]},
+  {id:"k4",code:"59615",nom:"Réouverture de branchements après chemisage",lieu:"Chartres-de-Bretagne",resp:["r1","r4"]},
+  {id:"k5",code:"59248",nom:"Diagnostic ITV avant travaux",lieu:"Saint-Jacques-de-la-Lande",resp:["r2","r3"]},
+  {id:"k6",code:"58903",nom:"Pose de manchettes",lieu:"Pacé · allée des Chênes",resp:["r5"]}
+];
+const PEOPLE=[
+  {id:"p1",nom:"Julien Le Goff",role:"Chef d'équipe gainage",agence:"Rennes"},
+  {id:"p2",nom:"Karim Benali",role:"Chauffeur poids lourd",agence:"Rennes"},
+  {id:"p3",nom:"Thomas Riou",role:"Technicien chemisage",agence:"Rennes"},
+  {id:"p4",nom:"Youssef El Amrani",role:"Chef d'équipe ITV",agence:"Rennes"},
+  {id:"p5",nom:"Maxime Le Bihan",role:"Manœuvre",agence:"Rennes"},
+  {id:"p6",nom:"Hamza Bennani",role:"Opérateur ITV",agence:"Rennes"},
+  {id:"p7",nom:"Loïc Hamon",role:"Chef d'équipe branchement",agence:"Rennes"},
+  {id:"p8",nom:"Rachid Ouazzani",role:"Opérateur robot fraiseur",agence:"Rennes"},
+  {id:"n1",nom:"Antoine Morel",role:"Opérateur ITV",agence:"Nantes"},
+  {id:"n2",nom:"Omar Tazi",role:"Technicien chemisage",agence:"Nantes"},
+  {id:"n3",nom:"Yann Kerboriou",role:"Chef d'équipe",agence:"Brest"},
+  {id:"n4",nom:"Mehdi Saïdi",role:"Opérateur robot fraiseur",agence:"Lyon"},
+  {id:"n5",nom:"Hugo Marchand",role:"Technicien chemisage",agence:"Tours"},
+  {id:"n6",nom:"Nabil Chraïbi",role:"Opérateur ITV",agence:"Bordeaux"},
+  {id:"n7",nom:"Romain Lefèvre",role:"Manœuvre",agence:"Lille"},
+  {id:"n8",nom:"Samir Alaoui",role:"Chauffeur poids lourd",agence:"Nantes"}
+];
+const VEHICULES=[
+  {id:"v1",nom:"Fourgon ITV",plaque:"GD-117-ZT"},
+  {id:"v2",nom:"Camionnette ITV",plaque:"FZ-208-MA"},
+  {id:"v3",nom:"Camion de gainage",plaque:"EZ-905-LM"},
+  {id:"v4",nom:"Camion de branchement",plaque:"GK-318-DS"},
+  {id:"v5",nom:"Utilitaire Master",plaque:"HB-230-KC"},
+  {id:"v6",nom:"Pick-up 4x4",plaque:"FT-664-AP"}
+];
+/* Unités : [singulier, pluriel] ; unités et kits = nombres entiers uniquement */
+const UNITS={m:["mètre","mètres"],"m²":["m²","m²"],kg:["kg","kg"],L:["litre","litres"],u:["unité","unités"],kit:["kit","kits"]};
+const INT_UNITS=["u","kit"];
+const MATS=[
+  ["m01","Gaine de chemisage fibre de verre DN200","m"],["m02","Gaine de chemisage fibre de verre DN300","m"],
+  ["m03","Gaine de chemisage fibre de verre DN400","m"],["m04","Gaine feutre polyester DN300","m"],
+  ["m05","Kit résine polyester A+B · 20 kg","kit","A : 19,6 kg + B : 0,4 kg"],
+  ["m06","Kit résine époxy A+B · 5 kg","kit","A : 3,4 kg + B : 1,6 kg"],
+  ["m07","Kit résine silicate A+B · 10 kg","kit","A : 5 kg + B : 5 kg"],
+  ["m08","Kit résine de branchement A+B · 1,5 kg","kit","A : 1 kg + B : 0,5 kg"],
+  ["m09","Manchette inox DN200","u"],["m10","Manchette inox DN300","u"],["m11","Manchette inox DN400","u"],
+  ["m12","Chapeau de branchement DN150","u"],["m13","Chapeau de branchement DN160","u"],
+  ["m14","Préliner PE","m"],["m15","Film de calibrage","m"],["m16","Mortier de réparation rapide","kg"],
+  ["m17","Mortier hydraulique d'étanchéité","kg"],["m18","Résine d'injection polyuréthane","L"],
+  ["m19","Obturateur gonflable DN300","u"],["m20","Lampe UV de rechange","u"],["m21","Fraise carbure pour robot","u"],
+  ["m22","Bande de signalisation","m"],["m23","Gazole non routier","L"],["m24","Joint d'étanchéité DN300","u"],
+  ["m25","Collier de prise en charge","u"],["m26","Tube PVC CR8 DN200","m"],["m27","Tube PVC CR8 DN160","m"],
+  ["m28","Géotextile de protection","m²"],["m29","Gants nitrile (boîte)","u"],["m30","Combinaison jetable","u"],
+  ["m31","Cartouche de graisse","u"],["m32","Absorbant hydrocarbures","kg"],["m33","Câble de tirage","m"],
+  ["m34","Clé USB rapport ITV","u"]
+].map(([id,nom,unite,comp])=>({id,nom,unite,comp}));
+/* Matériaux rattachés à chaque chantier dans la base : toujours proposés en premier */
+const CH_MAT={k1:["m03","m05","m11","m14","m15"],k2:["m02","m04","m05","m10","m15"],k3:["m19","m34","m22"],
+  k4:["m21","m12","m13","m08","m16"],k5:["m19","m34","m23"],k6:["m09","m10","m11","m06","m17"]};
+/* Équipes d'exemple : chef, auteur des feuilles, membres, chantiers, véhicules */
+const TEAMS=[
+  {id:"t1",chef:"p1",author:"p1",membres:["p1","p2","p3"],extra:"p5",chantiers:["k1","k2"],veh:["v3","v5"]},
+  {id:"t2",chef:"p4",author:"p6",membres:["p4","p6"],extra:"n1",chantiers:["k3","k5"],veh:["v1","v2"]},
+  {id:"t3",chef:"p7",author:"p8",membres:["p7","p8"],extra:"n4",chantiers:["k4","k6"],veh:["v4","v6"]}
+];
+const VCOMS=["Voyant pression pneus allumé, à faire vérifier.","Plein de gazole fait à la station de Bruz.","Rayure sur la portière droite, déjà présente le matin.","Groupe électrogène bruyant, à voir à l'atelier."];
+const COMS=["Accès difficile, riverain prévenu par le chef de chantier.","Pluie l'après-midi, polymérisation rallongée de 30 min.","Branchement non repéré sur plan, signalé au responsable.","Attente de la mairie pour l'arrêté de circulation (45 min).","Matériel livré en retard, démarrage décalé."];
+
+/* ===== Outils communs ===== */
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const TODAY=(()=>{const d=new Date();d.setHours(12,0,0,0);return d})();
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ini=n=>n.split(/[ -]/).filter(Boolean).map(p=>p[0]).slice(0,2).join("");
+const norm=s=>String(s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"");
+const mins=t=>{if(!t)return NaN;const[h,m]=t.split(":").map(Number);return h*60+m};
+const hm=x=>isNaN(x)?"--:--":`${pad(Math.floor(x/60)%24)}:${pad(x%60)}`;
+const fdur=d=>!d||d<=0?"":`${Math.floor(d/60)} h ${pad(d%60)}`;
+const fnum=n=>String(Math.round(n*100)/100).replace(".",",");
+const fq=(q,u)=>`${fnum(q)} ${UNITS[u][q>1?1:0]}`;
+const fdate=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{weekday:"long",day:"numeric",month:"long"});
+const fds=d=>new Date(d+"T12:00").toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"});
+const nowLabel=()=>{const d=new Date();return `le ${d.toLocaleDateString("fr-FR",{weekday:"short",day:"numeric",month:"short"})} à ${pad(d.getHours())}:${pad(d.getMinutes())}`};
+const HOURS=[...Array(24).keys()].map(pad);
+const QUARTS=["00","15","30","45"];
+function rng(seed){return()=>{seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function weekOf(date){const d=new Date(date+"T12:00"),day=(d.getDay()+6)%7,mon=new Date(d);mon.setDate(d.getDate()-day);
+  const th=new Date(mon);th.setDate(mon.getDate()+3);const y=new Date(th.getFullYear(),0,4);
+  const num=1+Math.round(((th-y)/864e5-3+((y.getDay()+6)%7))/7);const fri=new Date(mon);fri.setDate(mon.getDate()+4);
+  return{key:iso(mon),num,label:`Semaine ${num} · du ${mon.getDate()} au ${fri.toLocaleDateString("fr-FR",{day:"numeric",month:"long"})}`}}
+
+/* Horaires : la 1re personne de l'équipe donne la référence ; « Oui » = même heure pour tous, « Non » = saisie individuelle */
+const leadOf=sg=>[...sg.team][0];
+const val=(sg,k,id)=>{const g=sg[k];if(g.same||id===leadOf(sg))return g.common;return g.v[id]??g.common};
+const has=(t,id)=>t instanceof Set?t.has(id):t.includes(id);
+const cnt=t=>t instanceof Set?t.size:t.length;
+/* Une fin plus tôt que le début = poste de nuit qui finit le lendemain */
+const span=(s,e)=>{const a=mins(s),b=mins(e);if(isNaN(a)||isNaN(b))return null;return[a,b<=a?b+1440:b]};
+const pspan=(sg,id)=>span(val(sg,"s",id),val(sg,"e",id));
+const pdur=(sg,id)=>{const x=pspan(sg,id);return x?x[1]-x[0]:0};
+const isNight=(sg,id)=>{const x=pspan(sg,id);return !!x&&x[1]>=1440};
+const segRange=sg=>{const sp=[...sg.team].map(id=>pspan(sg,id)).filter(Boolean);if(!sp.length)return"--:-- – --:--";
+  const a=Math.min(...sp.map(x=>x[0])),b=Math.max(...sp.map(x=>x[1]));return `${hm(a)} – ${hm(b)}${b>=1440?" (+1 j)":""}`};
+const dayTeamOf=r=>{const o=[];r.segs.forEach(sg=>[...sg.team].forEach(id=>{if(!o.includes(id))o.push(id)}));return o};
+/* Contrôles : heures saisies, 14 h maximum, pas de chevauchement avec un autre chantier du même jour */
+function checkSeg(sg,others,P){const errs=[],bad=new Map();
+  const add=(id,k,msg,other)=>{errs.push({id,k,msg,other});if(!bad.has(id))bad.set(id,k)};
+  [...sg.team].forEach(id=>{const n=P[id].nom,sv=val(sg,"s",id),ev=val(sg,"e",id);
+    if(!sv)return add(id,"s",`Heure de début à saisir pour ${n}.`);
+    if(!ev)return add(id,"e",`Heure de fin à saisir pour ${n}.`);
+    const[s,e]=span(sv,ev);
+    if(e-s>14*60)return add(id,"e",`${n} : ${fdur(e-s)} de travail, plus de 14 h. Vérifiez l'heure de fin.`);
+    others.forEach(o=>{if(o.sg===sg||!has(o.sg.team,id))return;const x=pspan(o.sg,id);
+      if(x&&s<x[1]&&x[0]<e)add(id,s>=x[0]?"s":"e",`${n} est déjà sur ${o.label} de ${hm(x[0])} à ${hm(x[1])}.`,o.idx)})});
+  return{errs,bad}}
+/* Sélecteur d'heure au quart d'heure */
+function tsel(key,v,label){const[h,m]=v?v.split(":"):["","00"];
+  return `<span class="tsel" role="group" aria-label="${esc(label)}"><select data-tk="${key}" aria-label="Heures"><option value="">--</option>${HOURS.map(x=>`<option${x===h?" selected":""}>${x}</option>`).join("")}</select><b>:</b><select data-tk="${key}" aria-label="Minutes">${QUARTS.map(x=>`<option${x===m?" selected":""}>${x}</option>`).join("")}</select></span>`}
+
+/* Historique d'exemple : 4 semaines de feuilles pour les 3 équipes */
+function genReports(){const R=[],rnd=rng(4217),MB=Object.fromEntries(MATS.map(m=>[m.id,m]));
+  const pick=a=>a[Math.floor(rnd()*a.length)];
+  const minus=(t,d)=>hm(mins(t)-d);
+  const qty=u=>u==="m"?10+Math.floor(rnd()*70):u==="kit"?1+Math.floor(rnd()*4):u==="u"?1+Math.floor(rnd()*6):u==="kg"?5+Math.floor(rnd()*30):u==="L"?10+Math.floor(rnd()*40):5+Math.floor(rnd()*20);
+  const mats=k=>{const pool=[...CH_MAT[k]],n=2+Math.floor(rnd()*2),out=[];for(let i=0;i<n&&pool.length;i++){const m=MB[pool.splice(Math.floor(rnd()*pool.length),1)[0]];out.push({id:m.id,qty:qty(m.unite)})}return out};
+  const seg=(k,team,s,e,diff)=>{const eg=diff?{common:e,same:false,v:Object.fromEntries(team.map(id=>[id,id===diff?minus(e,60):e]))}:{common:e,same:true,v:{}};
+    return{chantier:k,team:[...team],s:{common:s,same:true,v:{}},e:eg,mat:mats(k)}};
+  for(let back=28;back>=1;back--){const d=new Date(TODAY);d.setDate(d.getDate()-back);const wd=d.getDay();if(wd===0||wd===6)continue;const date=iso(d);
+    TEAMS.forEach(t=>{const team=[...t.membres];if(rnd()<.3)team.push(t.extra);
+      const start=pick(["07:30","08:00","08:00"]),end=pick(["16:00","16:30","17:00","17:30"]),k1=pick(t.chantiers),segs=[];
+      const diff=rnd()<.25?team[team.length-1]:null;
+      if(rnd()<.4){const mid=pick(["11:30","12:00","13:00"]),k2=t.chantiers.find(k=>k!==k1);segs.push(seg(k1,team,start,mid,null),seg(k2,team,mid,end,diff))}
+      else segs.push(seg(k1,team,start,end,diff));
+      const veh=rnd()<.7?[...t.veh]:[t.veh[0]],drv={};
+      veh.forEach((v,i)=>{const who=i===0?team[1]:team[0];drv[v]={matin:who,journee:who,soir:who}});
+      const vcom={};if(rnd()<.15)vcom[veh[0]]=pick(VCOMS);
+      R.push({id:`${t.id}-${date}`,team:t.id,author:t.author,date,start,segs,veh,drv,vcom,comment:rnd()<.3?pick(COMS):""})})}
+  return R}
+
+const ME="p1";
+const P=Object.fromEntries(PEOPLE.map(p=>[p.id,p]));
+const V=Object.fromEntries(VEHICULES.map(v=>[v.id,v]));
+const K=Object.fromEntries(CHANTIERS.map(k=>[k.id,k]));
+const M=Object.fromEntries(MATS.map(m=>[m.id,m]));
+const RS=Object.fromEntries(RESPONSABLES.map(r=>[r.id,r]));
+const $=id=>document.getElementById(id);
+const store={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(_){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(_){}}};
+const SLOTS=[["matin","Matin"],["journee","Journée"],["soir","Soir"]];
+const ICONS={
+  debut:'<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 3h6v3H9zM9 11h6M9 15h4"/>',
+  chantier:'<path d="M12 21s-6-5.5-6-11a6 6 0 0 1 12 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/>',
+  heures:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+  lever:'<path d="M3 19h18M7 19a5 5 0 0 1 10 0M12 4v6M9 7l3-3 3 3M5 12l1.5 1.5M19 12l-1.5 1.5"/>',
+  coucher:'<path d="M3 19h18M7 19a5 5 0 0 1 10 0M12 4v6M9 7l3 3 3-3M5 12l1.5 1.5M19 12l-1.5 1.5"/>',
+  mat:'<path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/>',
+  veh:'<path d="M2 7h12v9H2zM14 10h4l3 3v3h-7"/><circle cx="6" cy="17.5" r="1.6"/><circle cx="17" cy="17.5" r="1.6"/>',
+  fin:'<path d="M5 21V4M5 4h12l-2.5 4L17 12H5"/>',
+  rapports:'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/>',
+  semaine:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'};
+const ico=n=>`<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">${ICONS[n]}</svg>`;
+
+/* Historique : feuilles d'exemple + journées enregistrées dans ce navigateur */
+let HIST=genReports().filter(r=>r.author===ME);
+const SAVED=store.get("ot-saved",[]);
+HIST=HIST.filter(r=>!SAVED.some(s=>s.date===r.date)).concat(SAVED).sort((a,b)=>b.date.localeCompare(a.date));
+const CUR_WEEK=weekOf(iso(TODAY)).key;
+const SENT=store.get("ot-sent",{});
+[...new Set(HIST.map(r=>weekOf(r.date).key))].forEach(k=>{if(k<CUR_WEEK&&!SENT[k]){const f=new Date(k+"T12:00");f.setDate(f.getDate()+4);SENT[k]=`le ${fds(iso(f))} à 17:40`}});
+const MY_TEAM=TEAMS.find(t=>t.author===ME);
+
+const MODES=[
+  {id:"veille",titre:"Rapport de la veille",desc:"Chantiers, équipe, horaires, matériaux, véhicules et conducteurs repris"},
+  {id:"equipe",titre:"Même équipe, chantier différent",desc:"Seule l'équipe est reprise, le reste est à saisir"},
+  {id:"vierge",titre:"Feuille vierge",desc:"Tout est à saisir"}];
+const SEC={debut:"debut",chantier:"chantier",equipe:"chantier",heures:"heures",materiaux:"mat",suite:"chantier",vehicules:"veh",conducteurs:"veh",commentaire:"fin",recap:"fin",done:"fin"};
+const GROUP={debut:0,chantier:1,equipe:1,heures:1,materiaux:1,suite:1,vehicules:2,conducteurs:2,commentaire:3,recap:3,done:4};
+
+const tg=v=>({common:v,same:true,v:{}});
+const newSeg=(start,team)=>({chantier:null,team:new Set(team),s:tg(start),e:tg(""),mat:[]});
+const cloneSeg=o=>({chantier:o.chantier,team:new Set(o.team),s:{common:o.s.common,same:o.s.same,v:{...o.s.v}},e:{common:o.e.common,same:o.e.same,v:{...o.e.v}},mat:o.mat.map(x=>({id:x.id,qty:null}))});
+let S,UI={tab:"saisie",rep:null,rq:"",wk:null,wstep:"view"};
+function reset(base){const b=base||HIST[0];
+  S={step:"debut",hist:[],mode:b?"veille":"vierge",base:b,applied:null,date:iso(TODAY),start:b?.start||"08:00",segs:[],cur:0,veh:new Set(),drv:{},vcom:{},vopen:new Set(),q:{},comment:"",ret:null}}
+reset();
+const seg=()=>S.segs[S.cur];
+const baseTeam=()=>S.base?dayTeamOf(S.base):MY_TEAM.membres;
+const baseVeh=()=>S.base?S.base.veh:[];
+const others=()=>S.segs.map((sg,i)=>({sg,idx:i,label:`le chantier ${i+1} (${K[sg.chantier]?.code||"?"})`}));
+const check=sg=>checkSeg(sg,others(),P);
+function applyMode(){const key=S.mode+"|"+(S.base?.id||"");if(S.applied===key&&S.segs.length)return;S.applied=key;S.cur=0;
+  if(S.mode==="veille"&&S.base){const b=S.base;S.segs=b.segs.map(cloneSeg);S.veh=new Set(b.veh);S.drv=JSON.parse(JSON.stringify(b.drv));S.vcom={}}
+  else{S.segs=[newSeg(S.start,S.mode==="equipe"?baseTeam():[])];S.veh=new Set();S.drv={};S.vcom={}}}
+const dayTeam=()=>dayTeamOf(S);
+const matBad=x=>!(x.qty>0)||(INT_UNITS.includes(M[x.id].unite)&&!Number.isInteger(x.qty));
+const matIssues=sg=>sg.mat.filter(matBad).length;
+function drvConflicts(){const c=[];SLOTS.forEach(([k,l])=>{const seen={};S.veh.forEach(v=>{const d=S.drv[v]?.[k];if(d){if(seen[d])c.push(`${P[d].nom} conduit deux véhicules sur le créneau « ${l} ».`);seen[d]=1}})});return c}
+const vehMissing=()=>[...S.veh].filter(v=>!SLOTS.some(([k])=>S.drv[v]?.[k]));
+function toRep(){return{id:"me-"+S.date,team:MY_TEAM.id,author:ME,date:S.date,start:S.segs[0]?.s.common||S.start,
+  segs:S.segs.map(sg=>({chantier:sg.chantier,team:[...sg.team],s:{...sg.s,v:{...sg.s.v}},e:{...sg.e,v:{...sg.e.v}},mat:sg.mat.map(x=>({...x}))})),
+  veh:[...S.veh],drv:JSON.parse(JSON.stringify(S.drv)),vcom:{...S.vcom},comment:S.comment}}
+
+/* ---------- Composants ---------- */
+function personBtn(p,sg){const on=sg.team.has(p.id);
+  return `<button class="opt" type="button" data-p="${p.id}" aria-pressed="${on}"><span class="av">${esc(ini(p.nom))}</span><span class="meta"><b>${esc(p.nom)}</b><span>${esc(p.role)}${p.agence!==AGENCE?" · agence de "+esc(p.agence):""}</span></span><span class="check">${on?"✓":""}</span></button>`}
+function vehBtn(v){const on=S.veh.has(v.id);
+  return `<button class="opt" type="button" data-v="${v.id}" aria-pressed="${on}"><span class="meta"><b>${esc(v.nom)}</b></span><span class="tag">${v.plaque}</span><span class="check">${on?"✓":""}</span></button>`}
+const respTxt=k=>k.resp.map(x=>RS[x].nom).join(", ");
+function segHead(){const sg=seg();return `<p class="eyebrow">Chantier ${S.cur+1}${sg.chantier?" · "+esc(K[sg.chantier].code):""}</p>`}
+function timeBlock(sg,k){const g=sg[k],ids=[...sg.team],lead=P[ids[0]],others=ids.slice(1),word=k==="s"?"début":"fin";
+  const row=id=>{const v=val(sg,k,id);return `<div class="row"><span class="meta"><b>${esc(P[id].nom)}</b></span>${g.same?`<span class="time">${v||"--:--"}</span>`:tsel(`${k}:${id}`,v,`Heure de ${word} de ${P[id].nom}`)}</div>`};
+  return `<div class="tblock ${k}"><div class="tblock-h">${ico(k==="s"?"lever":"coucher")}Heure de ${word}</div><div class="tblock-b">
+    <div class="field"><span class="lbl">${esc(lead.nom)}</span>${tsel(k==="s"?"cs":"ce",g.common,`Heure de ${word} de ${lead.nom}`)}</div>
+    ${others.length?`<div class="field"><span>Même heure de ${word} pour tout le monde ?</span><div class="toggle"><button type="button" data-same="${k}|1" aria-pressed="${g.same}">Oui</button><button type="button" data-same="${k}|0" aria-pressed="${!g.same}">Non</button></div></div>
+    <div class="rows">${others.map(row).join("")}</div>`:""}</div></div>`}
+function matSection(sg,i){const q=norm(S.q["m"+i]||""),own=CH_MAT[sg.chantier]||[],added=new Set(sg.mat.map(x=>x.id));
+  const addBtn=(m,isOwn)=>`<button class="addbtn" type="button" data-addmat="${i}|${m.id}"><span class="plus">+</span><span class="meta">${esc(m.nom)}${m.comp?`<span>${esc(m.comp)}</span>`:""}</span>${isOwn?'<span class="tag acc">chantier</span>':""}<span class="utag">${UNITS[m.unite][1]}</span></button>`;
+  let res="";
+  if(q.length>=2){const hits=MATS.filter(m=>!added.has(m.id)&&norm(m.nom+" "+UNITS[m.unite][1]).includes(q));
+    const a=hits.filter(m=>own.includes(m.id)),b=hits.filter(m=>!own.includes(m.id));
+    res=hits.length?`<div class="results">${a.length?`<div class="grp">Matériaux du chantier</div>${a.map(m=>addBtn(m,1)).join("")}`:""}${b.length?`<div class="grp">Catalogue</div>${b.map(m=>addBtn(m,0)).join("")}`:""}</div>`:'<p class="hint">Aucun matériau trouvé.</p>';
+  }else{const a=own.filter(id=>!added.has(id)).map(id=>M[id]);
+    res=a.length?`<div class="results"><div class="grp">Matériaux du chantier</div>${a.map(m=>addBtn(m,1)).join("")}</div>`:"";}
+  return `<div class="sec">
+    ${sg.mat.length?`<div class="rows">${sg.mat.map(x=>{const m=M[x.id],int=INT_UNITS.includes(m.unite),bad=matBad(x);
+      return `<div class="mrow"><span class="meta">${esc(m.nom)}${m.comp?`<span>${esc(m.comp)}</span>`:""}</span><span class="qty"><input type="number" inputmode="${int?"numeric":"decimal"}" enterkeyhint="next" min="0" step="${int?1:"any"}" data-qty="${i}|${m.id}" value="${x.qty??""}" placeholder="Qté" aria-label="Quantité de ${esc(m.nom)} en ${UNITS[m.unite][1]}" class="${bad?"bad":""}"><span class="unit" data-unit="${i}|${m.id}">${UNITS[m.unite][x.qty>1?1:0]}</span></span><button class="x" type="button" data-rmmat="${i}|${m.id}" aria-label="Retirer ${esc(m.nom)}">×</button></div>`}).join("")}</div>
+      <button class="morebtn" type="button" data-focusmat="${i}">+ Ajouter un autre matériau</button>`:""}
+    <input class="search" type="search" data-q="m${i}" id="qm${i}" placeholder="Rechercher dans tout le catalogue (${MATS.length} articles)" value="${esc(S.q["m"+i]||"")}">
+    ${res}</div>`}
+function recapHTML(r){const team=dayTeamOf(r);
+  return `<div class="recap">
+  ${r.segs.map((sg,i)=>{const k=K[sg.chantier];return `<section><h3>Chantier ${i+1} · ${segRange(sg)}</h3><b>${esc(k.code)} · ${esc(k.nom)}</b><span class="hint">${esc(k.lieu)} · Responsable${k.resp.length>1?"s":""} : ${esc(respTxt(k))}</span>
+    ${[...sg.team].map(id=>{const s=val(sg,"s",id),e=val(sg,"e",id),diff=s!==sg.s.common||e!==sg.e.common;
+      return `<div class="kv"><span>${esc(P[id].nom)}</span><span>${diff?`<span class="tag warn">${s} – ${e}</span>`:`${s} – ${e}`}${isNight(sg,id)?' <span class="tag">+1 j</span>':""}</span></div>`}).join("")}
+    ${sg.mat.length?`<span class="sub-h">Matériaux</span>${sg.mat.map(x=>`<div class="kv"><span>${esc(M[x.id].nom)}</span><span>${x.qty>0?fq(x.qty,M[x.id].unite):"—"}</span></div>`).join("")}`:""}</section>`}).join("")}
+  <section><h3>Véhicules</h3>${r.veh.length?r.veh.map(vid=>{const d=r.drv[vid]||{},c=(r.vcom||{})[vid];
+    return `<div><b>${esc(V[vid].nom)}</b> <span class="tag">${V[vid].plaque}</span>${SLOTS.map(([k,l])=>`<div class="kv"><span>${l}</span><span>${d[k]?esc(P[d[k]].nom):"—"}</span></div>`).join("")}${c?`<p class="note info comment">${esc(c)}</p>`:""}</div>`}).join(""):'<span class="hint">Aucun véhicule déclaré.</span>'}</section>
+  <section><h3>Total par personne</h3>${team.map(id=>`<div class="kv"><span>${esc(P[id].nom)}</span><span>${fdur(r.segs.reduce((a,sg)=>a+(has(sg.team,id)?pdur(sg,id):0),0))}</span></div>`).join("")}</section>
+  <section><h3>Commentaire</h3>${r.comment&&r.comment.trim()?`<div class="comment">${esc(r.comment)}</div>`:'<span class="hint">Aucun commentaire.</span>'}</section>
+  </div>`}
+
+/* ---------- Écrans de saisie ---------- */
+const VIEWS={
+  debut(){const b=S.base,isLast=b===HIST[0];
+    const modes=MODES.map(m=>{const off=m.id!=="vierge"&&!b,t=m.id==="veille"&&b&&!isLast?`Rapport du ${fdate(b.date)}`:m.titre;
+      return `<button class="opt" type="button" data-mode="${m.id}" aria-pressed="${S.mode===m.id}"${off?" disabled":""}><span class="meta"><b>${esc(t)}</b><span>${m.desc}</span></span><span class="check radio">${S.mode===m.id?"●":""}</span></button>`}).join("");
+    return `<div class="panel"><div><h2>Comment démarrer la feuille ?</h2><p class="hint">Vous ne corrigerez ensuite que ce qui change.</p></div>
+    <div class="list">${modes}</div>
+    ${S.mode!=="vierge"&&b?`<div class="rows"><div class="row"><span class="meta"><b>Base : ${esc(fdate(b.date))}</b><span>${S.mode==="veille"?`${b.segs.map(s=>K[s.chantier].code).join(" puis ")} · ${b.veh.length} véhicule(s) · `:""}${dayTeamOf(b).map(id=>P[id].nom).join(", ")}</span></span></div></div>`:""}
+    <div class="field"><label for="date">Date</label><input type="date" id="date" value="${S.date}"></div>
+    ${S.mode!=="veille"?`<div class="field"><span class="lbl">Heure de début</span>${tsel("day",S.start,"Heure de début")}</div>`:'<p class="hint">Les horaires de la base sont repris et restent modifiables chantier par chantier. Les matériaux sont repris sans quantité.</p>'}</div>`},
+  chantier(){const sg=seg(),q=norm(S.q.k||"");
+    const list=CHANTIERS.filter(k=>norm(k.code+" "+k.nom+" "+k.lieu).includes(q));
+    return `<div class="panel"><div>${segHead()}<h2>Choisir le chantier</h2></div>
+    <input class="search" type="search" data-q="k" id="qk" placeholder="Numéro, nom ou commune" value="${esc(S.q.k||"")}">
+    <div class="list">${list.map(k=>{const on=sg.chantier===k.id;
+      return `<button class="opt" type="button" data-k="${k.id}" aria-pressed="${on}"><span class="meta"><b>${esc(k.nom)}</b><span>${esc(k.lieu)} · ${esc(respTxt(k))}</span></span><span class="tag">${k.code}</span><span class="check radio">${on?"●":""}</span></button>`}).join("")||'<p class="hint">Aucun chantier trouvé.</p>'}</div></div>`},
+  equipe(){const sg=seg(),q=norm(S.q.n||""),bt=baseTeam();
+    const agence=PEOPLE.filter(p=>p.agence===AGENCE&&!bt.includes(p.id));
+    const nat=PEOPLE.filter(p=>p.agence!==AGENCE&&!bt.includes(p.id)&&(sg.team.has(p.id)||(q.length>=2&&norm(p.nom+p.role+p.agence).includes(q))));
+    const allIn=bt.every(id=>sg.team.has(id));
+    return `<div class="panel"><div>${segHead()}<h2>Choisir l'équipe</h2><p class="hint">${sg.team.size} personne(s) sélectionnée(s).</p></div>
+    <div class="sec"><div class="sec-h"><span>Équipe d'hier</span>${allIn?"":`<button class="link" type="button" data-allveille="1">Tout reprendre</button>`}</div>
+      <div class="list">${bt.map(id=>personBtn(P[id],sg)).join("")}</div></div>
+    <div class="sec"><div class="sec-h"><span>Agence de ${AGENCE}</span></div><div class="list">${agence.map(p=>personBtn(p,sg)).join("")}</div></div>
+    <div class="sec"><div class="sec-h"><span>Recherche nationale</span></div>
+      <input class="search" type="search" data-q="n" id="qn" placeholder="Nom, poste ou agence (2 lettres min.)" value="${esc(S.q.n||"")}">
+      <div class="list">${nat.map(p=>personBtn(p,sg)).join("")||(q.length>=2?'<p class="hint">Aucun résultat.</p>':"")}</div></div></div>`},
+  heures(){const sg=seg(),{errs,bad}=check(sg);
+    return `<div class="panel"><div>${segHead()}<h2>Horaires sur ce chantier</h2><p class="hint">${esc(K[sg.chantier].nom)} · au quart d'heure · une fin avant le début = fin le lendemain</p></div>
+    ${S.ret!=null?`<p class="note">Correction en cours. Une fois l'horaire corrigé, revenez au chantier ${S.ret+1}.</p>`:""}
+    ${timeBlock(sg,"s")}${timeBlock(sg,"e")}
+    <div class="sec"><div class="sec-h"><span>Résultat par personne</span></div><div class="rows">
+    ${[...sg.team].map(id=>{const s=val(sg,"s",id),e=val(sg,"e",id),k=bad.get(id);
+      const inner=`<span class="meta"><b>${esc(P[id].nom)}</b></span><span class="time">${s||"--:--"} – ${e||"--:--"}${isNight(sg,id)?" +1 j":""}</span><span class="dur">${fdur(pdur(sg,id))}</span>`;
+      return k?`<button type="button" class="row bad" data-fix="${k}|${id}" aria-label="Corriger l'horaire de ${esc(P[id].nom)}">${inner}</button>`:`<div class="row">${inner}</div>`}).join("")}</div></div>
+    ${errs.length?`<div class="note"><ul>${errs.slice(0,5).map(x=>`<li><button type="button" data-fix="${x.k}|${x.id}">${esc(x.msg)}</button>${x.other!=null&&S.ret==null?`<br><button type="button" class="link" data-goseg="${x.other}">Corriger sur le chantier ${x.other+1}</button>`:""}</li>`).join("")}</ul></div>`:""}</div>`},
+  materiaux(){const sg=seg();
+    return `<div class="panel"><div>${segHead()}<h2>Matériaux utilisés</h2><p class="hint">${esc(K[sg.chantier].nom)}. Les matériaux prévus sur ce chantier sont proposés en premier.</p></div>${matSection(sg,S.cur)}</div>`},
+  suite(){const sg=seg(),nxt=S.segs[S.cur+1],endRef=hm(Math.max(...[...sg.team].map(id=>pspan(sg,id)?.[1]??0)));
+    return `<div class="panel"><div><p class="eyebrow">Chantier ${S.cur+1} terminé</p><h2>Un autre chantier ensuite ?</h2></div>
+    <ol class="tl">${S.segs.slice(0,S.cur+1).map(s=>`<li><span class="time">${segRange(s)}</span> <b>${esc(K[s.chantier].code)} · ${esc(K[s.chantier].nom)}</b><br><span>${esc(K[s.chantier].lieu)} · ${s.team.size} pers. · ${s.mat.length} matériau(x)</span></li>`).join("")}</ol>
+    <div class="list"><button class="opt" type="button" data-act="more"><span class="meta"><b>Oui, chantier suivant</b><span>${nxt&&nxt.chantier?`${esc(K[nxt.chantier].code)} déjà pré-rempli`:`À partir de ${endRef}, avec les personnes qui finissaient à cette heure`}</span></span><span class="tag">+</span></button>
+    <button class="opt" type="button" data-act="stop"><span class="meta"><b>Non, passer aux véhicules</b><span>${nxt?`Le chantier ${S.cur+2} pré-rempli sera retiré`:"Véhicules et conducteurs de la journée"}</span></span><span class="tag">→</span></button></div></div>`},
+  vehicules(){const bv=baseVeh(),ag=VEHICULES.filter(v=>!bv.includes(v.id));
+    return `<div class="panel"><div><h2>Véhicules utilisés</h2><p class="hint">Pour toute la journée. Plusieurs choix possibles.</p></div>
+    ${bv.length?`<div class="sec"><div class="sec-h"><span>Véhicules d'hier</span></div><div class="list">${bv.map(id=>vehBtn(V[id])).join("")}</div></div>`:""}
+    <div class="sec"><div class="sec-h"><span>Agence de ${AGENCE}</span></div><div class="list">${ag.map(vehBtn).join("")}</div></div></div>`},
+  conducteurs(){const team=dayTeam(),c=drvConflicts();
+    const opts=sel=>`<option value="">—</option>`+team.map(id=>`<option value="${id}"${sel===id?" selected":""}>${esc(P[id].nom)}</option>`).join("");
+    return `<div class="panel"><div><h2>Qui a conduit ?</h2><p class="hint">Pour chaque véhicule : matin, journée, soir.</p></div>
+    ${[...S.veh].map(vid=>{const v=V[vid],d=S.drv[vid]||{},com=S.vcom[vid]||"",open=S.vopen.has(vid)||!!com;
+      return `<div class="vcard"><div class="vcard-h"><b>${esc(v.nom)}</b>${com?'<span class="tag acc">commentaire</span>':""}<span class="tag">${v.plaque}</span></div>
+      <div class="slots">${SLOTS.map(([k,l])=>`<label>${l}<select data-drv="${vid}|${k}">${opts(d[k])}</select></label>`).join("")}</div>
+      ${d.matin&&!(d.journee===d.matin&&d.soir===d.matin)?`<button class="link" type="button" data-copy="${vid}">Même conducteur sur les trois créneaux</button>`:""}
+      ${open?`<textarea id="vc-${vid}" data-vcom="${vid}" maxlength="500" placeholder="Situation particulière, panne, plein, dégât…" aria-label="Commentaire sur ${esc(v.nom)}">${esc(com)}</textarea>`:`<button class="link" type="button" data-vopen="${vid}">+ Ajouter un commentaire</button>`}</div>`}).join("")}
+    ${c.length?`<p class="note">${esc(c[0])}</p>`:""}</div>`},
+  commentaire(){return `<div class="panel"><div><h2>Commentaire de la journée</h2><p class="hint">Incident, météo, remarque client, demande de matériel… Facultatif.</p></div>
+    <textarea id="comment" maxlength="2000" style="min-height:170px" placeholder="Saisissez votre commentaire">${esc(S.comment)}</textarea></div>`},
+  recap(){return `<div class="panel"><div><h2>Récapitulatif</h2><p class="hint">${esc(fdate(S.date))}. Vérifiez avant d'enregistrer.</p></div>${recapHTML(toRep())}</div>`},
+  done(){const w=weekOf(S.date);return `<div class="panel done-box"><div class="ok">Journée enregistrée</div>
+    <p class="hint">${S.segs.length} chantier(s), ${dayTeam().length} personne(s), ${S.veh.size} véhicule(s). Elle sera incluse dans le rapport de la ${esc(w.label.toLowerCase())}.</p>
+    <button class="btn" type="button" data-gotab="semaine">Voir ma semaine</button></div>`}
+};
+
+/* ---------- Mes rapports ---------- */
+function rapportsView(){
+  if(UI.rep){const r=HIST.find(x=>x.id===UI.rep);return `<div class="panel"><div><p class="eyebrow">Rapport en lecture seule</p><h2>${esc(fdate(r.date))}</h2><p class="hint">${esc(weekOf(r.date).label)} · ${SENT[weekOf(r.date).key]?"rapport hebdo envoyé "+SENT[weekOf(r.date).key]:"rapport hebdo à envoyer"}</p></div>${recapHTML(r)}</div>`}
+  const q=norm(UI.rq);
+  const match=r=>!q||norm(fdate(r.date)+" "+new Date(r.date+"T12:00").toLocaleDateString("fr-FR")+" "+r.segs.map(s=>K[s.chantier].code+" "+K[s.chantier].nom).join(" ")).includes(q);
+  const list=HIST.filter(match),weeks=[];list.forEach(r=>{const w=weekOf(r.date);let g=weeks.find(x=>x.key===w.key);if(!g)weeks.push(g={...w,reps:[]});g.reps.push(r)});
+  return `<div class="panel"><div><h2>Mes rapports</h2><p class="hint">${HIST.length} journées enregistrées. Touchez une journée pour la revoir.</p></div>
+  <input class="search" type="search" id="rq" placeholder="Date (ex. 12/10), numéro ou nom de chantier" value="${esc(UI.rq)}">
+  ${weeks.map(w=>`<div class="sec"><div class="wk-h"><b>${esc(w.label)}</b>${SENT[w.key]?`<span class="pill ok">Envoyé ${esc(SENT[w.key])}</span>`:'<span class="pill todo">À envoyer</span>'}</div>
+    <div class="rows">${w.reps.map(r=>`<button type="button" class="row" data-rep="${r.id}"><span class="meta"><b>${esc(fds(r.date))}</b><span>${r.segs.map(s=>K[s.chantier].code).join(" · ")} · ${dayTeamOf(r).length} pers.</span></span><span class="dur">${fdur(r.segs.reduce((a,sg)=>a+(has(sg.team,ME)?pdur(sg,ME):0),0))}</span></button>`).join("")}</div></div>`).join("")||'<p class="hint">Aucun rapport ne correspond.</p>'}</div>`}
+
+/* ---------- Ma semaine (rapport hebdomadaire) ---------- */
+function weekData(key){const reps=HIST.filter(r=>weekOf(r.date).key===key).sort((a,b)=>a.date.localeCompare(b.date));
+  const people=[];reps.forEach(r=>dayTeamOf(r).forEach(id=>{if(!people.includes(id))people.push(id)}));
+  const hours={};people.forEach(id=>hours[id]={});
+  reps.forEach(r=>r.segs.forEach(sg=>[...sg.team].forEach(id=>{hours[id][r.date]=(hours[id][r.date]||0)+pdur(sg,id)})));
+  const ch={};reps.forEach(r=>r.segs.forEach(sg=>{const c=ch[sg.chantier]=ch[sg.chantier]||{h:0,days:new Set(),mat:{}};c.days.add(r.date);
+    [...sg.team].forEach(id=>c.h+=pdur(sg,id));sg.mat.forEach(x=>{if(x.qty>0)c.mat[x.id]=(c.mat[x.id]||0)+x.qty})}));
+  const veh={};reps.forEach(r=>r.veh.forEach(v=>{const o=veh[v]=veh[v]||{days:new Set(),drv:new Set()};o.days.add(r.date);Object.values(r.drv[v]||{}).forEach(d=>d&&o.drv.add(d))}));
+  const coms=[];reps.forEach(r=>{if(r.comment)coms.push([r.date,"Journée",r.comment]);Object.entries(r.vcom||{}).forEach(([v,t])=>t&&coms.push([r.date,V[v].nom,t]))});
+  const resp={};Object.keys(ch).forEach(k=>K[k].resp.forEach(x=>{(resp[x]=resp[x]||[]).includes(k)||resp[x].push(k)}));
+  return{reps,people,hours,ch,veh,coms,resp}}
+function semaineView(){
+  const keys=[...new Set(HIST.map(r=>weekOf(r.date).key))].slice(0,6);if(!UI.wk||!keys.includes(UI.wk))UI.wk=keys[0];
+  if(!UI.wk)return `<div class="panel"><h2>Ma semaine</h2><p class="hint">Aucune journée enregistrée.</p></div>`;
+  const w=weekOf(UI.wk),d=weekData(UI.wk),sent=SENT[UI.wk];
+  const chips=`<div class="chips">${keys.map(k=>`<button class="chip" type="button" data-wk="${k}" aria-pressed="${k===UI.wk}">S${weekOf(k).num}${SENT[k]?"":' <span class="pill todo">à envoyer</span>'}</button>`).join("")}</div>`;
+  const recips=`<div class="rows"><div class="row"><span class="av">${esc(ini(P[ME].nom))}</span><span class="meta"><b>${esc(P[ME].nom)} (vous)</b><span>Technicien · rapport complet</span></span></div>
+    ${Object.entries(d.resp).map(([r,ks])=>`<div class="row"><span class="av">${esc(ini(RS[r].nom))}</span><span class="meta"><b>${esc(RS[r].nom)}</b><span>${esc(RS[r].role)} · reçoit ${ks.map(k=>K[k].code).join(", ")}</span></span></div>`).join("")}</div>`;
+  if(UI.wstep==="preview"){
+    return `<div class="panel"><div><p class="eyebrow">${esc(w.label)}</p><h2>Vérifier l'envoi</h2><p class="hint">${1+Object.keys(d.resp).length} emails : le rapport complet pour vous, et pour chaque responsable la partie de ses chantiers.</p></div>
+    <div class="mail"><div class="mail-h"><div><span>À :</span> ${esc(P[ME].nom)}</div><div><span>Objet :</span> Rapport hebdomadaire S${w.num} · ${esc(P[ME].nom)}</div></div>
+      <div class="mail-b"><p class="hint">Bonjour,</p><p class="hint">Voici le récapitulatif de la ${esc(w.label.toLowerCase())} : ${d.reps.length} journée(s), ${Object.keys(d.ch).length} chantier(s), ${fdur(Object.values(d.ch).reduce((a,c)=>a+c.h,0))} au total pour l'équipe.</p>
+      ${Object.entries(d.ch).map(([k,c])=>`<div class="kv"><span>${esc(K[k].code)} · ${esc(K[k].nom)}</span><span>${fdur(c.h)}</span></div>`).join("")}</div></div>
+    ${Object.entries(d.resp).map(([r,ks])=>`<div class="mail"><div class="mail-h"><div><span>À :</span> ${esc(RS[r].nom)} · ${esc(RS[r].role)}</div><div><span>Objet :</span> Rapport S${w.num} · ${ks.map(k=>"chantier "+K[k].code).join(", ")}</div></div>
+      <div class="mail-b">${ks.map(k=>`<div class="kv"><span>${esc(K[k].code)} · ${d.ch[k].days.size} jour(s)</span><span>${fdur(d.ch[k].h)}</span></div>`).join("")}</div></div>`).join("")}
+    <p class="note info">Prototype : aucun email n'est réellement envoyé. Dans la version réelle, l'envoi se fera depuis le serveur.</p></div>`}
+  return `<div class="panel"><div><h2>Rapport hebdomadaire</h2><p class="hint">${esc(w.label)} · ${d.reps.length} journée(s) saisie(s)</p></div>
+  ${chips}
+  ${sent?`<p class="note ok">Rapport envoyé ${esc(sent)}.</p>`:'<p class="note">Rapport pas encore envoyé.</p>'}
+  <div class="sec"><div class="sec-h"><span>Heures par personne</span></div><div class="scroll"><table class="grid"><thead><tr><th>Personne</th>${d.reps.map(r=>`<th>${esc(fds(r.date).replace(/\.$/,""))}</th>`).join("")}<th>Total</th></tr></thead>
+    <tbody>${d.people.map(id=>{const t=Object.values(d.hours[id]).reduce((a,b)=>a+b,0);return `<tr><td>${esc(P[id].nom)}</td>${d.reps.map(r=>`<td>${d.hours[id][r.date]?fdur(d.hours[id][r.date]):"—"}</td>`).join("")}<td class="tot">${fdur(t)}</td></tr>`}).join("")}</tbody></table></div></div>
+  <div class="sec"><div class="sec-h"><span>Par chantier</span></div><div class="recap">${Object.entries(d.ch).map(([k,c])=>`<section><h3>${esc(K[k].code)} · ${c.days.size} jour(s) · ${fdur(c.h)}</h3><b>${esc(K[k].nom)}</b>
+    ${Object.entries(c.mat).map(([m,q])=>`<div class="kv"><span>${esc(M[m].nom)}</span><span>${fq(q,M[m].unite)}</span></div>`).join("")||'<span class="hint">Aucun matériau.</span>'}</section>`).join("")}</div></div>
+  <div class="sec"><div class="sec-h"><span>Véhicules</span></div><div class="rows">${Object.entries(d.veh).map(([v,o])=>`<div class="row"><span class="meta"><b>${esc(V[v].nom)}</b><span>${[...o.drv].map(x=>P[x].nom).join(", ")}</span></span><span class="dur">${o.days.size} j</span></div>`).join("")||'<div class="row"><span class="hint">Aucun véhicule.</span></div>'}</div></div>
+  <div class="sec"><div class="sec-h"><span>Commentaires</span></div>${d.coms.length?`<div class="rows">${d.coms.map(([dt,w2,t])=>`<div class="row"><span class="meta"><b>${esc(fds(dt))} · ${esc(w2)}</b><span class="comment">${esc(t)}</span></span></div>`).join("")}</div>`:'<p class="hint">Aucun commentaire.</p>'}</div>
+  <div class="sec"><div class="sec-h"><span>Destinataires</span></div>${recips}</div></div>`}
+
+/* ---------- Rendu ---------- */
+function canNext(){const sg=seg();switch(S.step){
+  case"debut":return !!(S.date&&S.start);
+  case"chantier":return !!sg.chantier;
+  case"equipe":return sg.team.size>0;
+  case"heures":return check(sg).errs.length===0;
+  case"materiaux":return matIssues(sg)===0;
+  case"conducteurs":return vehMissing().length===0&&drvConflicts().length===0;
+  default:return true}}
+function info(){const sg=seg();switch(S.step){
+  case"equipe":return `${sg.team.size} personne(s)`;
+  case"heures":{const n=check(sg).bad.size;return n?`${n} personne(s) à corriger`:"Horaires cohérents"}
+  case"materiaux":{const n=matIssues(sg),bad=sg.mat.find(matBad);return n?(bad&&bad.qty>0?"Nombre entier attendu pour les unités et les kits":`${n} quantité(s) à saisir`):`${sg.mat.length} matériau(x)`}
+  case"vehicules":return `${S.veh.size} véhicule(s)`;
+  case"conducteurs":{const m=vehMissing().length;return m?`${m} véhicule(s) sans conducteur`:"Tous les véhicules ont un conducteur"}
+  default:return ""}}
+function bandFor(){if(UI.tab==="rapports")return["rapports","Mes rapports"];if(UI.tab==="semaine")return["semaine","Rapport hebdomadaire"];
+  const st=S.step,n=S.cur+1;
+  return({debut:["debut","Début de journée"],chantier:["chantier",`Chantier ${n}`],equipe:["chantier",`Chantier ${n} · équipe`],heures:["heures",`Chantier ${n} · horaires`],
+    materiaux:["mat",`Chantier ${n} · matériaux`],suite:["chantier",`Chantier ${n} · terminé`],vehicules:["veh","Véhicules"],conducteurs:["veh","Conducteurs"],
+    commentaire:["fin","Fin de journée"],recap:["fin","Fin de journée"],done:["fin","Journée enregistrée"]})[st]}
+function render(){
+  document.querySelectorAll(".tab").forEach(t=>t.setAttribute("aria-selected",t.dataset.tab===UI.tab));
+  const[icn,txt]=bandFor();$("band").innerHTML=`${ico(icn)}<span>${esc(txt)}</span>`;
+  document.documentElement.dataset.sec=UI.tab==="saisie"?SEC[S.step]:"fin";
+  $("steps").hidden=UI.tab!=="saisie";
+  if(UI.tab==="saisie"){const g=GROUP[S.step];document.querySelectorAll("#steps li").forEach((li,i)=>li.className=i<g?"done":i===g?"on":"");$("view").innerHTML=VIEWS[S.step]()}
+  else $("view").innerHTML=UI.tab==="rapports"?rapportsView():semaineView();
+  bar();
+}
+function bar(){const nx=$("next"),bk=$("back");
+  if(UI.tab==="rapports"){bk.hidden=!UI.rep;bk.textContent="Retour à la liste";nx.hidden=!UI.rep;nx.disabled=false;nx.textContent="Repartir de ce rapport";$("info").textContent="";return}
+  if(UI.tab==="semaine"){const sent=SENT[UI.wk];bk.hidden=UI.wstep!=="preview";bk.textContent="Modifier";nx.hidden=!UI.wk;
+    nx.disabled=!!sent&&UI.wstep!=="preview";nx.textContent=UI.wstep==="preview"?"Confirmer l'envoi":sent?"Rapport envoyé":"Envoyer le rapport";
+    $("info").textContent=UI.wstep==="preview"?"":sent?"":"Vous et les responsables des chantiers";return}
+  bk.textContent="Retour";
+  bk.hidden=S.step==="debut"||S.step==="done"||S.ret!=null;
+  nx.hidden=S.step==="suite";
+  nx.textContent=S.step==="done"?"Nouvelle journée":S.step==="recap"?"Enregistrer la journée":S.step==="heures"?(S.ret!=null?`Revenir au chantier ${S.ret+1}`:"Valider les horaires"):S.step==="materiaux"?(seg().mat.length?"Terminer les matériaux":"Aucun matériau"):S.step==="vehicules"&&S.veh.size===0?"Aucun véhicule":"Suivant";
+  nx.disabled=!canNext();
+  $("info").textContent=info();
+}
+function go(step){S.hist.push(S.step);S.step=step;S.q={};render();window.scrollTo(0,0)}
+function focusTime(key){const el=document.querySelector(`select[data-tk="${key}"]`);if(!el)return;
+  el.scrollIntoView({block:"center",behavior:"smooth"});el.focus({preventScroll:true});try{el.showPicker()}catch(_){}}
+function focusMatSearch(i){const el=$("qm"+i);if(el){el.focus();el.scrollIntoView({block:"center",behavior:"smooth"})}}
+function saveDay(){const r=toRep();HIST=HIST.filter(x=>x.date!==r.date);HIST.push(r);HIST.sort((a,b)=>b.date.localeCompare(a.date));
+  const saved=store.get("ot-saved",[]).filter(x=>x.date!==r.date);saved.push(r);store.set("ot-saved",saved);
+  const k=weekOf(r.date).key;if(SENT[k]){delete SENT[k];store.set("ot-sent",SENT)}}
+
+$("next").onclick=()=>{
+  if(UI.tab==="rapports"){const r=HIST.find(x=>x.id===UI.rep);reset(r);S.mode="veille";UI.tab="saisie";UI.rep=null;render();window.scrollTo(0,0);return}
+  if(UI.tab==="semaine"){if(UI.wstep==="preview"){SENT[UI.wk]=nowLabel();store.set("ot-sent",SENT);UI.wstep="view"}else UI.wstep="preview";render();window.scrollTo(0,0);return}
+  switch(S.step){
+  case"debut":applyMode();if(S.mode!=="veille")S.segs[0].s.common=S.start;return go("chantier");
+  case"chantier":return go("equipe");
+  case"equipe":return go("heures");
+  case"heures":if(S.ret!=null){S.cur=S.ret;S.ret=null;S.hist.pop();S.step="heures";render();window.scrollTo(0,0);return}return go("materiaux");
+  case"materiaux":return go("suite");
+  case"vehicules":return go(S.veh.size?"conducteurs":"commentaire");
+  case"conducteurs":return go("commentaire");
+  case"commentaire":return go("recap");
+  case"recap":saveDay();return go("done");
+  case"done":reset();return render();
+}};
+$("back").onclick=()=>{
+  if(UI.tab==="rapports"){UI.rep=null;render();return}
+  if(UI.tab==="semaine"){UI.wstep="view";render();return}
+  const prev=S.hist.pop()||"debut";if(S.step==="chantier"&&prev==="suite")S.cur--;S.step=prev;render();window.scrollTo(0,0)};
+document.querySelector(".tabs").addEventListener("click",e=>{const t=e.target.closest("[data-tab]");if(!t)return;UI.tab=t.dataset.tab;UI.rep=null;UI.wstep="view";render();window.scrollTo(0,0)});
+
+$("view").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;const d=b.dataset;
+  if(d.gotab){UI.tab=d.gotab;UI.wk=weekOf(S.date).key;render();window.scrollTo(0,0);return}
+  if(d.rep){UI.rep=d.rep;render();window.scrollTo(0,0);return}
+  if(d.wk){UI.wk=d.wk;UI.wstep="view";render();return}
+  if(UI.tab!=="saisie")return;
+  const sg=seg();
+  if(d.mode){S.mode=d.mode;if(d.mode==="veille")S.start=S.base?.start||S.start}
+  if(d.k)sg.chantier=d.k;
+  if(d.p){sg.team.has(d.p)?sg.team.delete(d.p):sg.team.add(d.p)}
+  if(d.allveille)baseTeam().forEach(id=>sg.team.add(id));
+  if(d.same){const[k,on]=d.same.split("|"),g=sg[k];g.same=on==="1";if(!g.same)sg.team.forEach(id=>{if(g.v[id]==null)g.v[id]=g.common})}
+  if(d.fix){const[k,id]=d.fix.split("|"),g=sg[k];let key=k==="s"?"cs":"ce";
+    if(id!==leadOf(sg)){if(g.same){g.same=false;sg.team.forEach(x=>{if(g.v[x]==null)g.v[x]=g.common})}key=`${k}:${id}`}
+    render();return focusTime(key)}
+  if(d.goseg!=null&&d.goseg!==""&&d.goseg!==undefined){S.ret=S.cur;S.cur=+d.goseg;return go("heures")}
+  if(d.v){S.veh.has(d.v)?(S.veh.delete(d.v),delete S.drv[d.v],delete S.vcom[d.v]):S.veh.add(d.v)}
+  if(d.copy){const x=S.drv[d.copy];x.journee=x.matin;x.soir=x.matin}
+  if(d.vopen){S.vopen.add(d.vopen);render();const t=$("vc-"+d.vopen);if(t)t.focus();return}
+  if(d.addmat){const[i,id]=d.addmat.split("|");S.segs[+i].mat.push({id,qty:null});S.q["m"+i]="";render();
+    const inp=document.querySelector(`input[data-qty="${i}|${id}"]`);if(inp)inp.focus();return}
+  if(d.rmmat){const[i,id]=d.rmmat.split("|");S.segs[+i].mat=S.segs[+i].mat.filter(x=>x.id!==id)}
+  if(d.focusmat!=null&&d.focusmat!==undefined&&d.focusmat!==""){return focusMatSearch(d.focusmat)}
+  if(d.act==="more"){if(!S.segs[S.cur+1]){const endMax=Math.max(...[...sg.team].map(id=>pspan(sg,id)?.[1]??0)),endTxt=hm(endMax);
+      const team=[...sg.team].filter(id=>pspan(sg,id)?.[1]===endMax);S.segs.push(newSeg(endTxt,team))}S.cur++;return go("chantier")}
+  if(d.act==="stop"){S.segs.length=S.cur+1;return go("vehicules")}
+  render();
+});
+function setQty(t){const[i,id]=t.dataset.qty.split("|"),x=S.segs[+i].mat.find(m=>m.id===id),n=parseFloat(String(t.value).replace(",","."));
+  x.qty=isNaN(n)?null:n;t.classList.toggle("bad",matBad(x));const u=document.querySelector(`[data-unit="${i}|${id}"]`);if(u)u.textContent=UNITS[M[id].unite][x.qty>1?1:0];bar()}
+$("view").addEventListener("change",e=>{const t=e.target;if(UI.tab!=="saisie")return;const sg=seg();
+  if(t.dataset.tk){const[hs,ms]=t.parentElement.querySelectorAll("select"),v=hs.value?`${hs.value}:${ms.value}`:"",key=t.dataset.tk;
+    if(key==="day")S.start=v;else if(key==="cs")sg.s.common=v;else if(key==="ce")sg.e.common=v;
+    else{const[k,id]=key.split(":");sg[k].v[id]=v}}
+  else if(t.id==="date")S.date=t.value;
+  else if(t.dataset.drv){const[v,k]=t.dataset.drv.split("|");(S.drv[v]=S.drv[v]||{})[k]=t.value}
+  else if(t.dataset.qty){setQty(t);return}
+  else return;
+  render();
+});
+$("view").addEventListener("keydown",e=>{const t=e.target;if(e.key==="Enter"&&t.dataset.qty){e.preventDefault();setQty(t);focusMatSearch(t.dataset.qty.split("|")[0])}});
+$("view").addEventListener("input",e=>{const t=e.target;
+  if(t.id==="comment"){S.comment=t.value;return}
+  if(t.dataset.vcom){S.vcom[t.dataset.vcom]=t.value;return}
+  if(t.dataset.qty){setQty(t);return}
+  if(t.id==="rq"){UI.rq=t.value;render();const n=$("rq");n.focus();n.setSelectionRange(n.value.length,n.value.length);return}
+  if(t.dataset.q==null)return;
+  S.q[t.dataset.q]=t.value;const id=t.id;render();const n=$(id);n.focus();n.setSelectionRange(n.value.length,n.value.length)});
+$("who").textContent=`${P[ME].nom} · ${P[ME].role} · agence de ${AGENCE}`;
+render();
+</script>
+
+</body></html>
